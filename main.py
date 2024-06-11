@@ -11,6 +11,9 @@ mp_draw = mp.solutions.drawing_utils
 
 last_hand_landmark_data = None
 
+def within_range(value, target, tolerance):
+    return target - tolerance <= value <= target + tolerance
+
 
 
 if not cap.isOpened():
@@ -39,9 +42,9 @@ while True:
             this_hand_landmark_data = []
             for lm in hand_landmarks.landmark:
                 this_hand_landmark_data.append((lm.x, lm.y, lm.z))
-                
-            if last_hand_landmark_data and this_hand_landmark_data != last_hand_landmark_data:
-                print(this_hand_landmark_data[-1])
+            if last_hand_landmark_data:
+                if within_range(sum(this_hand_landmark_data[-1]), sum(last_hand_landmark_data[-1]), 1.5):
+                    print(this_hand_landmark_data[-1])
                 
             last_hand_landmark_data = this_hand_landmark_data
             
