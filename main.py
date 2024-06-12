@@ -20,6 +20,8 @@ if not cap.isOpened():
     print("Error: Could not open video stream or file")
     exit()
 
+buffer = 0
+
 while True:
     
     ret, frame = cap.read()
@@ -42,14 +44,17 @@ while True:
             this_hand_landmark_data = []
             for lm in hand_landmarks.landmark:
                 this_hand_landmark_data.append((lm.x, lm.y, lm.z))
-            if last_hand_landmark_data:
-                if within_range(sum(this_hand_landmark_data[-1]), sum(last_hand_landmark_data[-1]), 1.5):
-                    print(this_hand_landmark_data[-1])
                 
+            if  last_hand_landmark_data and buffer % 10 == 0:
+                #if within_range(sum(this_hand_landmark_data[-1]), sum(last_hand_landmark_data[-1]), 1.5):
+                
+                print(this_hand_landmark_data)
+            buffer += 1
             last_hand_landmark_data = this_hand_landmark_data
             
+            
     
-        
+    
     cv2.imshow('Hand Tracking', frame)
     
     if cv2.waitKey(1) & 0xFF == ord('q'):
