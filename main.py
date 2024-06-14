@@ -1,18 +1,27 @@
 import cv2
 import mediapipe as mp
+import math
 
 cap = cv2.VideoCapture(0)
 
+mp_pose = mp.solutions.pose
 mp_hands = mp.solutions.hands
 
 hands = mp_hands.Hands()
 
+pose = mp_pose.Pose()
+
 mp_draw = mp.solutions.drawing_utils
 
-last_hand_landmark_data = None
+last_pose_landmark_data = None
 
 def within_range(value, target, tolerance):
     return target - tolerance <= value <= target + tolerance
+
+def find_distance(point1, point2):
+    x1, y1, z1 = point1
+    x2, y2, z2 = point2
+    return math.sqrt((x2-x1)**2 + (y2-y1)**2 + (z2-z1)**2)
 
 
 
@@ -33,24 +42,34 @@ while True:
         
     rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     
-    result = hands.process(rgb_frame)
+    result = pose.process(rgb_frame)
+    hand_result = hands.process(rgb_frame)
     
     
-    if result.multi_hand_landmarks:
-        for hand_landmarks in result.multi_hand_landmarks:
-            mp_draw.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
+    if result.pose_landmarks or hand_result.multi_hand_landmarks:
+        #for pose_landmarks in result.multi_pose_landmarks:
+        mp_draw.draw_landmarks(frame, result.pose_landmarks, mp_pose.POSE_CONNECTIONS)
+        if hand_result.multi_hand_landmarks:
+            for hand_landmark in hand_result.multi_hand_landmarks:
+                mp_draw.draw_landmarks(frame, hand_landmark, mp_hands.HAND_CONNECTIONS)
             
             
-            this_hand_landmark_data = []
-            for lm in hand_landmarks.landmark:
-                this_hand_landmark_data.append((lm.x, lm.y, lm.z))
+        this_pose_landmark_data = []
+        
+        for lm in result.pose_landmarks.landmark[12:23:2]:
+            if buffer % 10 == 0 and lm.visibility > .75:
+                this_pose_landmark_data.append((lm.x,  lm.y,  lm.z))
+            elif buffer % 10 == 0:
+                this_pose_landmark_data.append((0,0,0))
                 
-            if  last_hand_landmark_data and buffer % 10 == 0:
-                #if within_range(sum(this_hand_landmark_data[-1]), sum(last_hand_landmark_data[-1]), 1.5):
+       
                 
-                print(this_hand_landmark_data)
-            buffer += 1
-            last_hand_landmark_data = this_hand_landmark_data
+        if this_pose_landmark_data:  
+            #h_L1 = find_distance(this_pose_landmark_data[0], this_pose_landmark_data[2])
+            print(f"Distance from base to end effector: {math.sqrt((this_pose_landmark_data[2][0] - this_pose_landmark_data[0][0]) ** 2 + (this_pose_landmark_data[2][1] - this_pose_landmark_data[0][1]) ** 2)}")
+            print()
+    buffer += 1
+    
             
             
     
