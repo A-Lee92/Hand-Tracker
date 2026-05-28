@@ -1,0 +1,26 @@
+{
+  "human_full_reach": 0.55,
+  "center_delta": {
+    "x": 0.25,
+    "y": 0.0,
+    "z": 0.0
+  },
+  "robot_min_x": 80.0,
+  "robot_max_x": 220.0,
+  "robot_neutral_y": 0.0,
+  "robot_min_y": -120.0,
+  "robot_max_y": 120.0,
+  "robot_neutral_z": 90.0,
+  "robot_min_z": 30.0,
+  "robot_max_z": 180.0,
+  "lateral_scale_mm": 450.0,
+  "vertical_scale_mm": 450.0,
+  "min_wrist_deg": -90.0,
+  "max_wrist_deg": 90.0,
+  "grip_closed_distance": 0.025,
+  "grip_open_distance": 0.12,
+  "smoothing_alpha": 0.35,
+  "deadband_mm": 2.0,
+  "wrist_deadband_deg": 2.0,
+  "grip_deadband": 0.03
+}

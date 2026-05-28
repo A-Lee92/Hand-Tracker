@@ -1,0 +1,4 @@
+mediapipe
+numpy
+opencv-contrib-python
+pyserial

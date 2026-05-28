@@ -1,0 +1,5 @@
+__pycache__/
+*.py[cod]
+models/*.task
+models/*.tmp
+robot_config.json
